@@ -2,13 +2,17 @@
   "name": "@webreflection/bindings",
   "version": "0.0.1",
   "description": "A (soon to be) collection of bindings for various scenarios.",
-  "exports": {
-    "./message-port": "./src/message-port.js"
+  "types": {
+    "./message-port": "./src/message-port.d.ts"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "exports": {
+    "./message-port": {
+      "types": "./src/message-port.d.ts",
+      "import": "./src/message-port.js"
+    }
   },
   "keywords": [
+    "bindings",
     "MessagePort"
   ],
   "author": "Andrea Giammarchi",
@@ -16,10 +20,9 @@
   "type": "module",
   "dependencies": {
     "@webreflection/utils": "^0.3.6",
-    "next-resolver": "^0.2.0"
+    "next-resolver": "^0.2.1"
   },
   "main": "index.js",
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/WebReflection/bindings.git"
