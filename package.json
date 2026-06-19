@@ -20,7 +20,7 @@
   "type": "module",
   "dependencies": {
     "@webreflection/utils": "^0.3.6",
-    "next-resolver": "^0.2.1"
+    "next-resolver": "^0.2.2"
   },
   "main": "index.js",
   "repository": {
