@@ -15,9 +15,17 @@
     "bindings",
     "MessagePort"
   ],
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
   "author": "Andrea Giammarchi",
   "license": "MIT",
   "type": "module",
+  "scripts": {
+    "test": "node test/verify-runtime.mjs"
+  },
   "dependencies": {
     "@webreflection/utils": "^0.3.6",
     "next-resolver": "^0.2.2"

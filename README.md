@@ -64,6 +64,71 @@ await worker.sum(1, 2);
 
 Remote methods always return a `Promise`, even when the handler on the other side is synchronous.
 
+#### Transferable responses
+
+Import `options` and assign `this[options]` inside a local handler to pass
+`postMessage` options (typically `{ transfer: [...] }`) with the response.
+`options` is the only symbol used by this module. `bindings()` installs a
+setter-only accessor on the `local` object — assign before returning; it
+cannot be read back. Use method syntax (not arrow functions) so `this` refers
+to `local`:
+
+```js
+import bindings, { options } from '@webreflection/bindings/message-port';
+
+/** @typedef {import('@webreflection/bindings/message-port').RemoteProxy} RemoteProxy */
+/** @typedef {import('@webreflection/bindings/message-port').LocalOptionsHost} LocalOptionsHost */
+
+const { port1, port2 } = new MessageChannel();
+
+// this side exposes `readBuffer` to the other side
+bindings(port1, {
+  /** @this {LocalOptionsHost} */
+  readBuffer() {
+    const i32a = new Int32Array([1, 2, 3]);
+    this[options] = { transfer: [i32a.buffer] };
+    return i32a;
+  },
+});
+
+// other side calls it through the returned proxy
+/** @type {RemoteProxy<{ readBuffer: () => Int32Array }>} */
+const remote = bindings(port2, {});
+
+const i32a = await remote.readBuffer();
+```
+
+```ts
+import bindings, {
+  options,
+  type LocalOptionsHost,
+  type RemoteProxy,
+} from '@webreflection/bindings/message-port';
+
+const { port1, port2 } = new MessageChannel();
+
+type WorkerAPI = { readBuffer: () => Int32Array<ArrayBuffer> };
+
+bindings(port1, {
+  readBuffer(this: LocalOptionsHost) {
+    const i32a = new Int32Array([1, 2, 3]);
+    this[options] = { transfer: [i32a.buffer] };
+    return i32a;
+  },
+});
+
+const worker = bindings<Record<string, never>, WorkerAPI>(port2, {});
+await worker.readBuffer();
+```
+
+There is a single `opts` slot per `bindings()` call. Treat `this[options]` as an
+advanced feature: assign it right before returning, when something must be
+transferred, and only if you understand concurrent handlers on the same port
+can overwrite each other's options while they are in flight.
+
+On failure, any options set during that handler are discarded (`finally` clears
+the slot) and the error reply is sent without them.
+
 ## Currently Available
 
   * `@webreflection/bindings/message-port` — bind APIs over a *MessagePort* (workers, iframes, `MessageChannel`, etc.)
