@@ -12,17 +12,19 @@ const { port1, port2 } = new MessageChannel;
 // expose bindings the remote can invoke
 // the `remote` itself can invoke (asynchronously)
 // bindings exposed via the other port
-const remote = bindings(port1, {
-  log(...values) {
-    console.log(...values);
-  }
-});
+const remote = /** @type {{sum: (a:number, b:number) => Promise<number>}} */(
+  bindings(port1, {
+    log(...values) {
+      console.log(...values);
+    }
+  })
+);
 
 // assuming this is an iframe
 parent.postMessage(null, '*', [port2]);
 
 // later on ...
-const value = await remote.doThings(1, 2, 3);
+const value = await remote.sum(1, 2);
 ```
 
 The remote counterpart can use or expose bindings in a similar way, this module just orchestrate a reliable way to invoke exposed APIs via `postMessage` dances.

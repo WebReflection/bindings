@@ -7,7 +7,7 @@ const [next, resolve] = nextResolver();
  * Creates a proxy that can be used to call methods remotely via the port.
  * @param {MessagePort} port - The port to use for communication.
  * @param {Record<string, (...args: any[]) => Promise<any>>} bindings - The bindings to use for the methods.
- * @returns {Record<string, (...args: any[]) => Promise<any>>}
+ * @returns {unknown}
  */
 export default (port, bindings) => {
   port.onmessage = async ({ data: [exec, id, name, args] }) => {
