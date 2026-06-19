@@ -1,6 +1,6 @@
 {
   "name": "@webreflection/bindings",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A (soon to be) collection of bindings for various scenarios.",
   "exports": {
     "./message-port": "./src/message-port.js"
