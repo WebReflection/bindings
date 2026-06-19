@@ -1,6 +1,6 @@
 {
   "name": "@webreflection/bindings",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A (soon to be) collection of bindings for various scenarios.",
   "types": {
     "./message-port": "./src/message-port.d.ts"
