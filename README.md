@@ -1,5 +1,7 @@
 # @webreflection/bindings
 
+[![Coverage Status](https://coveralls.io/repos/github/WebReflection/bindings/badge.svg?branch=main)](https://coveralls.io/github/WebReflection/bindings?branch=main)
+
 A (soon to be) collection of bindings for various scenarios.
 
 ### Example
