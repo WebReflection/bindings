@@ -24,11 +24,17 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "node test/verify-runtime.mjs"
+    "coverage": "mkdir -p ./coverage; c8 report --reporter=text-lcov > ./coverage/lcov.info",
+    "test": "c8 node test/verify-runtime.mjs"
   },
   "dependencies": {
     "@webreflection/utils": "^0.3.6",
     "next-resolver": "^0.2.2"
+  },
+  "overrides": {
+    "c8": {
+      "yargs": "^18.0.0"
+    }
   },
   "main": "index.js",
   "repository": {
@@ -38,5 +44,8 @@
   "bugs": {
     "url": "https://github.com/WebReflection/bindings/issues"
   },
-  "homepage": "https://github.com/WebReflection/bindings#readme"
+  "homepage": "https://github.com/WebReflection/bindings#readme",
+  "devDependencies": {
+    "c8": "^11.0.0"
+  }
 }
