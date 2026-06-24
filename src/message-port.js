@@ -1,6 +1,7 @@
 //@ts-check
 
 import nextResolver from 'next-resolver';
+import Map from '@webreflection/utils/map';
 import { nil } from '@webreflection/utils/empty';
 
 const { defineProperty } = Object;
@@ -44,7 +45,7 @@ const bindings = (port, local) => {
   // secure the postMessage method to avoid potential
   // MessagePort.prototype.postMessage overrides interfering
   // with the communication channel
-  const post = port.postMessage.bind(port);
+  const post = port.postMessage.bind(port), $ = new Map;
 
   let opts = nil;
 
@@ -66,13 +67,11 @@ const bindings = (port, local) => {
   };
 
   return /** @type {import('./message-port.js').RemoteProxy<Remote>} */(new Proxy(nil, {
-    get(_, name) {
-      return (/** @type {any[]} */ ...args) => {
-        const [id, promise] = next();
-        post([true, id, name, args]);
-        return promise;
-      };
-    }
+    get: (_, name) => $.get(name) ?? $.put(name, (/** @type {any[]} */ ...args) => {
+      const [id, promise] = next();
+      post([true, id, name, args]);
+      return promise;
+    }),
   }));
 };
 
