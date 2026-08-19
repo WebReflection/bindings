@@ -28,8 +28,7 @@
     "test": "c8 node test/verify-runtime.mjs"
   },
   "dependencies": {
-    "@webreflection/utils": "^0.3.6",
-    "next-resolver": "^0.2.2"
+    "@webreflection/utils": "^0.4.16"
   },
   "overrides": {
     "c8": {
@@ -46,6 +45,6 @@
   },
   "homepage": "https://github.com/WebReflection/bindings#readme",
   "devDependencies": {
-    "c8": "^11.0.0"
+    "c8": "^12.0.0"
   }
 }
