@@ -1,6 +1,7 @@
 //@ts-check
 
 import nextResolver from '@webreflection/utils/next-resolver';
+import Proxy from '@webreflection/utils/unthenable';
 import Map from '@webreflection/utils/map';
 import { nil } from '@webreflection/utils/empty';
 

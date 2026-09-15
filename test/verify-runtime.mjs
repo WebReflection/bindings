@@ -25,6 +25,8 @@ bindings(port1, {
 
 const remote = bindings(port2, {});
 
+console.assert(await remote === remote);
+
 await remote.failWithOptions().catch((error) => {
   if (error.message !== 'fail') throw error;
 });
