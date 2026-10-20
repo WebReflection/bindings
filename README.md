@@ -131,6 +131,61 @@ can overwrite each other's options while they are in flight.
 On failure, any options set during that handler are discarded (`finally` clears
 the slot) and the error reply is sent without them.
 
+#### Transferable invokes
+
+Version `0.3` — supports passing transferables directly via `options` and through the proxy itself.
+
+```js
+import bindings from '@webreflection/bindings/message-port';
+
+const { port1, port2 } = new MessageChannel();
+
+// initialize the worker and send the port immediatly
+const worker = new Worker('./read-buffer.js', { type: 'module' });
+worker.postMessage(null, { targetOrigin: '*', transfer: [port2] });
+
+const remote = bindings(port1, {
+  log(...values) {
+    console.log(...values);
+  },
+});
+
+// some data wrapping a buffer that needs to tbe sent
+const ui8a = new Uint8Array([1, 2, 3]);
+
+// remote[options](value) set the value
+// and returns remote itself
+const rb = await remote[options]({ transfer: [ui8a.buffer] }).readBuffer(ui8a);
+```
+
+The `./read-buffer.js` in example could contain something like:
+
+```js
+import bindings, { options } from '@webreflection/bindings/message-port';
+
+const main = await new Promise(resolve => {
+  addEventListener(
+    'message',
+    ({ ports: [ port ] }) => {
+      resolve(bindings(port, {
+        readBuffer(ui8a) {
+          // ui8a.buffer was transfered and this is
+          // just as ping-pong example that re-trnasfer back
+          this[options] = { transfer: [ui8a.buffer] }
+          return ui8a;
+        }
+      }));
+    },
+    // drop once initialized
+    { once: true }
+  );
+});
+
+await main.log('hello', 'world');
+```
+
+This way both the invoker and the (invoked) receiver can transfer data.
+
 ## Currently Available
 
   * `@webreflection/bindings/message-port` — bind APIs over a *MessagePort* (workers, iframes, `MessageChannel`, etc.)

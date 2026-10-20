@@ -6,7 +6,7 @@ import Map from '@webreflection/utils/map';
 import { nil } from '@webreflection/utils/empty';
 
 const { defineProperty } = Object;
-const [next, resolve] = nextResolver();
+const [ next, resolve ] = nextResolver();
 
 /**
  * @typedef {StructuredSerializeOptions} PostMessageOptions
@@ -46,7 +46,18 @@ const bindings = (port, local) => {
   // secure the postMessage method to avoid potential
   // MessagePort.prototype.postMessage overrides interfering
   // with the communication channel
-  const post = port.postMessage.bind(port), $ = new Map;
+  const post = port.postMessage.bind(port), $ = new Map, proxy = new Proxy(nil, {
+    get: (_, name) => name === options ?
+      ((/** @type {any} */ value) => ((opts = value), proxy)) :
+      ($.get(name) ?? $.put(name, (/** @type {any[]} */ ...args) => {
+        try {
+          const [ id, promise ] = next();
+          post([true, id, name, args], opts);
+          return promise;
+        }
+        finally { opts = nil }
+      })),
+  });
 
   let opts = nil;
 
@@ -67,13 +78,7 @@ const bindings = (port, local) => {
     else resolve(id, name, args);
   };
 
-  return /** @type {import('./message-port.js').RemoteProxy<Remote>} */(new Proxy(nil, {
-    get: (_, name) => $.get(name) ?? $.put(name, (/** @type {any[]} */ ...args) => {
-      const [id, promise] = next();
-      post([true, id, name, args]);
-      return promise;
-    }),
-  }));
+  return /** @type {import('./message-port.js').RemoteProxy<Remote>} */(proxy);
 };
 
 export default bindings;
