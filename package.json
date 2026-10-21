@@ -6,6 +6,7 @@
     "./message-port": "./src/message-port.d.ts"
   },
   "exports": {
+    ".": "./src/message-port.js",
     "./message-port": {
       "types": "./src/message-port.d.ts",
       "import": "./src/message-port.js"
@@ -16,6 +17,7 @@
     "MessagePort"
   ],
   "files": [
+    "index.js",
     "src",
     "README.md",
     "LICENSE"
@@ -35,7 +37,7 @@
       "yargs": "^18.0.0"
     }
   },
-  "main": "index.js",
+  "main": "./src/message-port.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/WebReflection/bindings.git"
